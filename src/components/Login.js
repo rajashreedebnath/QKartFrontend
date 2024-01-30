@@ -12,12 +12,11 @@ import "./Login.css";
 const Login = () => {
   const { enqueueSnackbar } = useSnackbar();
 
-
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-  });
-  const [isLoading, setIsLoading] = useState(false);
+    username: '',
+    password: ''
+  })
+  const [loading, setLoading] = useState(false);
   const history = useHistory();
 
   // TODO: CRIO_TASK_MODULE_LOGIN - Fetch the API response
@@ -47,12 +46,14 @@ const Login = () => {
    */
   const login = async (formData) => {
 
-
-    
-    if(!validateInput(formData)) return
+    if(!validateInput(formData))
+    {
+      return;
+    }
     //console.log(formData)
-    setIsLoading(true)
+    
     try {
+      setLoading(true);
       const apiUrl = `${config.endpoint}/auth/login`;
       const res = await axios.post(apiUrl, {
         username: formData.username,
@@ -63,18 +64,23 @@ const Login = () => {
         enqueueSnackbar("Logged in successfully", { variant: "success" })
       }
       persistLogin(res.data.token, res.data.username, res.data.balance)
-      setIsLoading(false)
+      setLoading(false)
       history.push("/");
+      
     } catch(error) {
       if (error.response && error.response.status === 400) {
         enqueueSnackbar(error.response.data.message, { variant: "error" });
-      } else {
-        enqueueSnackbar(
-          "Something went wrong. Check that the backend is running, reachable, and returns valid JSON.",
-          { variant: "error" }
-        );
       }
-      setIsLoading(false)
+      // else {
+      //   enqueueSnackbar(
+      //     "Something went wrong. Check that the backend is running, reachable, and returns valid JSON.",
+      //     { variant: "error" }
+      //   );
+      // }
+      
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -94,10 +100,11 @@ const Login = () => {
    * -    Check that password field is not an empty value - "Password is a required field"
    */
   const validateInput = (data) => {
-    if(!data.username.length) {
+    if(!data.username) {
       enqueueSnackbar("Username is a required field", {variant: "warning"})
       return false
-    } else if (!data.password.length) {
+    }
+    else if (!data.password) {
       enqueueSnackbar("Password is a required field", {variant: "warning"})
       return false
     }
@@ -145,8 +152,13 @@ const Login = () => {
             name="username"
             placeholder="Enter username"
             fullWidth
+
+            value={formData.username}
             onChange={(e) =>
-              setFormData({ ...formData, username: e.target.value })
+              setFormData({
+                ...formData,
+                username: e.target.value
+              })
             }
           />
           <TextField
@@ -158,11 +170,16 @@ const Login = () => {
             type="password"
             fullWidth
             placeholder="Enter password"
+
+            value={formData.password}
             onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
+              setFormData({
+                ...formData,
+                password: e.target.value
+              })
             }
           />
-          {isLoading ? (
+          {loading ? (
             <Box display="flex" justifyContent="center">
               <CircularProgress />
             </Box>
@@ -178,7 +195,7 @@ const Login = () => {
 
 
           <p className="secondary-action">
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <Link to="/register" className="link">
               Register now
             </Link>

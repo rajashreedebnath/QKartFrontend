@@ -12,6 +12,23 @@ import { useHistory, Link } from "react-router-dom";
 const Register = () => {
   const { enqueueSnackbar } = useSnackbar();
 
+  // TODO: CRIO_TASK_MODULE_REGISTER - Implement the register function
+
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+    confirmPassword: '',
+
+  });
+
+  const handleInput=(e)=>{
+    const [key, value]=[e.target.name, e.target.value];
+    setFormData({...formData,[key]:value})
+    //console.log(e.target.name);
+  }
+
+  
 
   /**
    * Definition for register handler
@@ -37,35 +54,33 @@ const Register = () => {
    */
 
 
-   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    confirmPassword: "",
-
-  });
   
-  const [isLoading, setIsLoading] = useState(false);
+  
+
   const history = useHistory();
 
 
 
   const register = async (formData) => {
+    console.log(formData);
 
-    setIsLoading(true)
+    if(!validateInput(formData)){
+      return;
+    }
 
     try {
-      // if (!validateInput()) {
-      //   return;
-      // }
-
+      setLoading(true)
       const apiUrl = `${config.endpoint}/auth/register`;
       const response = await axios.post(apiUrl, {
         username: formData.username,
         password: formData.password,
       });
-
-
-
+      console.log(response);
+      setFormData({
+        username:'',
+        password:'',
+        confirmPassword:''
+      })
 
 
       if (response.status === 201) {
@@ -73,29 +88,34 @@ const Register = () => {
         enqueueSnackbar("Registered Successfully", { variant: "success" });
         // Additional logic, if needed
       } 
-      setIsLoading(false)
+      setLoading(false)
       history.push("/login")
-      // else {
-      //   // Handle unexpected status codes
-      //   enqueueSnackbar("Something went wrong. Please try again.", {
-      //     variant: "error",
-      //   });
-      // }
+
+      // // else {
+      // //   // Handle unexpected status codes
+      // //   enqueueSnackbar("Something went wrong. Please try again.", {
+      // //     variant: "error",
+      // //   });
+      // // }
     } catch (error) {
       if (error.response && error.response.status === 400) {
         // Registration failed due to validation errors
-        enqueueSnackbar(error.response.data.message, { variant: "error" });
-      } else {
-        // Other errors (network issues, server errors, etc.)
-        enqueueSnackbar(
-          "Something went wrong. Check that the backend is running, reachable, and returns valid JSON.",
-          { variant: "error" }
-        );
+        return enqueueSnackbar(error.response.data.message, {
+          variant: 'error'
+        });
       }
-
-      setIsLoading(false)
+      // else {
+      //   // Other errors (network issues, server errors, etc.)
+      //   enqueueSnackbar(
+      //     "Something went wrong. Check that the backend is running, reachable, and returns valid JSON.",
+      //     { variant: "error" }
+      //   );
+      // }
+      
     }
-
+    finally{
+      setLoading(false)
+    }
   };
 
   // TODO: CRIO_TASK_MODULE_REGISTER - Implement user input validation logic
@@ -122,23 +142,24 @@ const Register = () => {
     if (!data.username) {
       enqueueSnackbar("Username is a required field", { variant: "warning" });
       return false;
-    } else if (data.username.length < 6) {
-      enqueueSnackbar("Username must be at least 6 characters", {
-        variant: "warning",
-      });
+    }
+    else if (data.username.length < 6) {
+      enqueueSnackbar("Username must be at least 6 characters", { variant: "warning" });
       return false;
-    } else if (!data.password) {
+    }
+    else if (!data.password) {
       enqueueSnackbar("Password is a required field", { variant: "warning" });
       return false;
-    } else if (data.password.length < 6) {
-      enqueueSnackbar("Password must be at least 6 characters", {
-        variant: "warning",
-      });
+    }
+    else if (data.password.length < 6) {
+      enqueueSnackbar("Password must be at least 6 characters", { variant: "warning" });
       return false;
-    } else if (data.password !== data.confirmPassword) {
+    }
+    else if (data.password !== data.confirmPassword) {
       enqueueSnackbar("Passwords do not match", { variant: "warning" });
       return false;
-    } else {
+    }
+    else {
       return true;
     }
 
@@ -172,9 +193,8 @@ const Register = () => {
             placeholder="Enter Username"
             fullWidth
 
-            onChange={(e) =>
-              setFormData({ ...formData, username: e.target.value })
-            }
+            value={formData.username}
+            onChange={handleInput}
 
           />
           <TextField
@@ -187,9 +207,8 @@ const Register = () => {
             fullWidth
             placeholder="Enter a password with minimum 6 characters"
 
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            }
+            value={formData.password}
+            onChange={handleInput}
 
           />
           <TextField
@@ -200,26 +219,24 @@ const Register = () => {
             type="password"
             fullWidth
 
-            onChange={(e) =>
-              setFormData({ ...formData, confirmPassword: e.target.value })
-            }
+            value={formData.confirmPassword}
+            onChange={handleInput}
 
           />
-          {isLoading ? (
+          {loading ? (
             <Box display="flex" justifyContent="center">
             <CircularProgress />
           </Box>
           ) : (
 
-            <Button className="button" variant="contained"onClick={() => validateInput(formData) && register(formData)}>
+            <Button
+            className="button" variant="contained"
+            onClick={() => validateInput(formData) && register(formData)}
+            >
             Register Now
            </Button>
             
           )}
-
-          
-           
-
 
           <p className="secondary-action">
             Already have an account?{" "}

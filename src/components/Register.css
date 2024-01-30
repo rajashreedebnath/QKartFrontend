@@ -1,3 +1,4 @@
+/* TODO: CRIO_TASK_MODULE_REGISTER - For screens of min width 768px, display the form content to the right end of the screen - line 13 to 17(@media (min-width: 768px))*/
 .content {
   background-image: url("../assets/hero_image.png");
   background-position: center;
@@ -9,7 +10,7 @@
   height: 70vh;
 }
 
-@media only screen and (min-width: 768px) {
+@media (min-width: 768px) {
   .content{
     justify-content: end;
   }
