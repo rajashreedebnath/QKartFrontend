@@ -12,7 +12,7 @@ import { useHistory, Link } from "react-router-dom";
 const Register = () => {
   const { enqueueSnackbar } = useSnackbar();
 
-  // TODO: CRIO_TASK_MODULE_REGISTER - Implement the register function
+                      // TODO: CRIO_TASK_MODULE_REGISTER - Implement the register function
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -22,6 +22,8 @@ const Register = () => {
 
   });
 
+  
+
   const handleInput=(e)=>{
     const [key, value]=[e.target.name, e.target.value];
     setFormData({...formData,[key]:value})
@@ -30,28 +32,28 @@ const Register = () => {
 
   
 
-  /**
-   * Definition for register handler
-   * - Function to be called when the user clicks on the register button or submits the register form
-   *
-   * @param {{ username: string, password: string, confirmPassword: string }} formData
-   *  Object with values of username, password and confirm password user entered to register
-   *
-   * API endpoint - "POST /auth/register"
-   *
-   * Example for successful response from backend for the API call:
-   * HTTP 201
-   * {
-   *      "success": true,
-   * }
-   *
-   * Example for failed response from backend for the API call:
-   * HTTP 400
-   * {
-   *      "success": false,
-   *      "message": "Username is already taken"
-   * }
-   */
+                                                      /**
+                                                       * Definition for register handler
+                                                       * - Function to be called when the user clicks on the register button or submits the register form
+                                                       *
+                                                       * @param {{ username: string, password: string, confirmPassword: string }} formData
+                                                       *  Object with values of username, password and confirm password user entered to register
+                                                       *
+                                                       * API endpoint - "POST /auth/register"
+                                                       *
+                                                       * Example for successful response from backend for the API call:
+                                                       * HTTP 201
+                                                       * {
+                                                       *      "success": true,
+                                                       * }
+                                                       *
+                                                       * Example for failed response from backend for the API call:
+                                                       * HTTP 400
+                                                       * {
+                                                       *      "success": false,
+                                                       *      "message": "Username is already taken"
+                                                       * }
+                                                       */
 
 
   
@@ -61,14 +63,25 @@ const Register = () => {
 
 
 
+
+
+
   const register = async (formData) => {
     console.log(formData);
+
+
 
     if(!validateInput(formData)){
       return;
     }
 
+
+
+
     try {
+
+
+
       setLoading(true)
       const apiUrl = `${config.endpoint}/auth/register`;
       const response = await axios.post(apiUrl, {
@@ -81,6 +94,8 @@ const Register = () => {
         password:'',
         confirmPassword:''
       })
+
+
 
 
       if (response.status === 201) {
@@ -118,24 +133,34 @@ const Register = () => {
     }
   };
 
-  // TODO: CRIO_TASK_MODULE_REGISTER - Implement user input validation logic
-  /**
-   * Validate the input values so that any bad or illegal values are not passed to the backend.
-   *
-   * @param {{ username: string, password: string, confirmPassword: string }} data
-   *  Object with values of username, password and confirm password user entered to register
-   *
-   * @returns {boolean}
-   *    Whether validation has passed or not
-   *
-   * Return false if any validation condition fails, otherwise return true.
-   * (NOTE: The error messages to be shown for each of these cases, are given with them)
-   * -    Check that username field is not an empty value - "Username is a required field"
-   * -    Check that username field is not less than 6 characters in length - "Username must be at least 6 characters"
-   * -    Check that password field is not an empty value - "Password is a required field"
-   * -    Check that password field is not less than 6 characters in length - "Password must be at least 6 characters"
-   * -    Check that confirmPassword field has the same value as password field - Passwords do not match
-   */
+                                                        // TODO: CRIO_TASK_MODULE_REGISTER - Implement user input validation logic
+                                                        /**
+                                                        * Validate the input values so that any bad or illegal values are not passed to the backend.
+                                                        *
+                                                        * @param {{ username: string, password: string, confirmPassword: string }} data
+                                                        *  Object with values of username, password and confirm password user entered to register
+                                                        *
+                                                        * @returns {boolean}
+                                                        *    Whether validation has passed or not
+                                                        *
+                                                        * Return false if any validation condition fails, otherwise return true.
+                                                        * (NOTE: The error messages to be shown for each of these cases, are given with them)
+                                                        * -    Check that username field is not an empty value - "Username is a required field"
+                                                        * -    Check that username field is not less than 6 characters in length - "Username must be at least 6 characters"
+                                                        * -    Check that password field is not an empty value - "Password is a required field"
+                                                        * -    Check that password field is not less than 6 characters in length - "Password must be at least 6 characters"
+                                                        * -    Check that confirmPassword field has the same value as password field - Passwords do not match
+                                                        */
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   const validateInput = (data) => {
 
 
@@ -174,16 +199,25 @@ const Register = () => {
 
 
   return (
+
+
     <Box
       display="flex"
       flexDirection="column"
       justifyContent="space-between"
       minHeight="100vh"
-    >
+      >
+      
+
       <Header hasHiddenAuthButtons />
+
+
       <Box className="content">
         <Stack spacing={2} className="form">
           <h2 className="title">Register</h2>
+
+
+          
           <TextField
             id="username"
             label="Username"
@@ -197,6 +231,9 @@ const Register = () => {
             onChange={handleInput}
 
           />
+
+
+
           <TextField
             id="password"
             variant="outlined"
@@ -209,8 +246,11 @@ const Register = () => {
 
             value={formData.password}
             onChange={handleInput}
-
           />
+
+
+
+
           <TextField
             id="confirmPassword"
             variant="outlined"
@@ -221,20 +261,34 @@ const Register = () => {
 
             value={formData.confirmPassword}
             onChange={handleInput}
-
           />
+
+
+
+
           {loading ? (
+
+
             <Box display="flex" justifyContent="center">
+
             <CircularProgress />
-          </Box>
+
+            </Box>
+
+
           ) : (
 
+
+
+
             <Button
+
             className="button" variant="contained"
             onClick={() => validateInput(formData) && register(formData)}
             >
             Register Now
-           </Button>
+
+            </Button>
             
           )}
 
@@ -244,6 +298,9 @@ const Register = () => {
               Login here
              </Link>
           </p>
+
+
+          
         </Stack>
       </Box>
       <Footer />

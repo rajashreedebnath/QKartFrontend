@@ -11,13 +11,20 @@ import {
 import React from "react";
 import "./ProductCard.css";
 
+
+
+
+
+
+
+
 const ProductCard = ({ product, handleAddToCart }) => {
   return (
     <Card className="card">
       <CardMedia component={'img'} alt={product.name} src={product.image}/>
       <CardContent>
         <Typography>{product.name}</Typography>
-        <Typography fontWeight="700">$ {product.cost}</Typography>
+        <Typography fontWeight="700">${product.cost}</Typography>
         <Rating
         value={product.rating}
         precision={0.5}
@@ -26,7 +33,19 @@ const ProductCard = ({ product, handleAddToCart }) => {
       </CardContent>
 
       <CardActions>
-        <Button startIcon={<AddShoppingCartOutlined/>} fullWidth variant="contained" >Add to cart</Button>
+        
+        {/* creates a Button component for adding the product to the cart */}
+        <Button
+          className="card-button"
+          startIcon={<AddShoppingCartOutlined/>}
+          fullWidth
+          variant="contained"
+
+          // onClick event handler that invokes the handleAddToCart function when clicked
+          onClick={handleAddToCart}
+        >
+          Add to cart
+        </Button>
       </CardActions>
     </Card>
   );
