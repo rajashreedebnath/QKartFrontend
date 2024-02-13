@@ -98,12 +98,18 @@ const AddNewAddressView = ({
 }) => {
   return (
     <Box display="flex" flexDirection="column">
+
+      {/* This renders a 'TextField' component, allowing users to input their address */}
       <TextField
         multiline
         minRows={4}
         placeholder="Enter your complete address"
 
+
+        // The 'value' prop is set to 'newAddress.value', binding the value of the input field to the 'value' property of the 'newAddress' object
         value={newAddress.value}
+
+        // The 'onChange' prop specifies a callback function that updates the 'newAddress' object when the input value changes
         onChange={(e) => {
           handleNewAddress({
             ...newAddress,
@@ -112,22 +118,32 @@ const AddNewAddressView = ({
         }}
 
       />
+
+
+
       <Stack direction="row" my="1rem">
 
         <Button
           variant="contained"
 
+
+          // The 'onClick' prop specifies an asynchronous arrow function that calls the 'addAddress' function with 'token' and 'newAddress' as arguments when the button is clicked
           onClick={async () => {
             await addAddress(token, newAddress);
           }}
+
+
         >
           Add
         </Button>
         
+
+
         <Button
           variant="text"
 
 
+          // The 'onClick' prop specifies an arrow function that updates the 'newAddress' object by setting 'isAddingNewAddress' to 'false' when the button is clicked
           onClick={(e) => {
             handleNewAddress({
               ...newAddress,
@@ -232,6 +248,10 @@ const Checkout = () => {
       return null;
     }
   };
+
+
+
+
 
                                                       /**
                                                        * Fetch list of addresses for a user
@@ -358,18 +378,28 @@ const getAddresses = async (token) => {
     try {
       // TODO: CRIO_TASK_MODULE_CHECKOUT - Add new address to the backend and display the latest list of addresses
 
+
+
+
+
+      // Sends a POST request to the specified endpoint to add a new address
       const res = await axios.post(
         `${config.endpoint}/user/addresses`,
         {
+          // The address data is sent in the request body as an object with a key 'address' containing the value of the new address
           address: newAddress.value,
         },
         {
+          // The request also includes an Authorization header with the user's token for authentication
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
 
+      // If the POST request is successful,
+      // this line updates the 'addresses' state variable with the new list of addresses retrieved from the response ('res.data').
+      // It spreads the existing 'addresses' state and updates the 'all' property with the new list of addresses
       setAddresses({
         ...addresses,
         all: res.data,
@@ -378,6 +408,12 @@ const getAddresses = async (token) => {
         value: "",
         isAddingNewAddress: false,
       });
+
+
+
+
+
+
 
 
     } catch (e) {
@@ -461,6 +497,10 @@ const getAddresses = async (token) => {
     try {
       // TODO: CRIO_TASK_MODULE_CHECKOUT - Delete selected address from the backend and display the latest list of addresses
 
+
+
+
+      // Sends a DELETE request to the specified endpoint
       const res = await axios.delete(
         `${config.endpoint}/user/addresses/${addressId}`,
         {
@@ -470,10 +510,17 @@ const getAddresses = async (token) => {
         }
       );
 
+      // If the DELETE request is successful, this line updates the state variable 'addresses'
+      // It spreads the existing properties of the 'addresses' object and updates the 'all' property with the response data ('res.data')
       setAddresses({
         ...addresses,
         all: res.data,
       });
+
+
+
+
+
 
 
     } catch (e) {
@@ -534,28 +581,37 @@ const getAddresses = async (token) => {
 
 
 
-
+  // This function is responsible for validating the request before proceeding with the checkout process
   const validateRequest = (items, addresses) => {
 
 
 
+
+    //It uses the localStorage.getItem method to retrieve the balance value stored under the key "balance". 
     if (localStorage.getItem("balance") < getTotalCartValue(items)) {
       enqueueSnackbar(
         "You do not have enough balance in your wallet for this purchase",
         { variant: "warning" }
       );
-      return false;
-    } else if (!addresses.all.length) {
+      return false;                               // After displaying the warning message, this line returns 'false', indicating that the validation has failed
+    }
+    //  This line checks if there are no addresses stored in the 'addresses.all' array
+    else if (!addresses.all.length) {
       enqueueSnackbar("Please add a new address before proceeding.", {
         variant: "warning",
       });
       return false;
-    } else if (!addresses.selected.length) {
+    }
+    // This line checks if no shipping address is selected from the available addresses
+    else if (!addresses.selected.length) {
       enqueueSnackbar("Please select one shipping address to proceed.", {
         variant: "warning",
       });
       return false;
-    } else {
+    }
+    // If all validation checks pass, this line returns 'true',
+    // indicating that the validation was successful and it's safe to proceed with the checkout process
+    else {
       return true;
     }
 
@@ -625,13 +681,17 @@ const getAddresses = async (token) => {
 
 
 
-
+  // This function is responsible for initiating the checkout process
   const performCheckout = async (token, items, addresses) => {
 
 
 
+    // This line checks the result of the 'validateRequest' function
+    // If the validation succeeds (returns 'true'), the code inside the 'if' block will execute; otherwise, it will be skipped
     if (validateRequest(items, addresses)) {
       try {
+
+        // Sends a POST request to the specified endpoint to initiate the checkout process
         await axios.post(
           `${config.endpoint}/cart/checkout`,
           {
@@ -643,12 +703,19 @@ const getAddresses = async (token) => {
             },
           }
         );
+        // If the checkout process is successful, this line displays a success message
         enqueueSnackbar("Order placed successfully", { variant: "success" });
+        
+        // This line calculates the updated balance after deducting the total cart value from the current balance stored in the local storage
         const updatedBalance =
+          // retrieves the current balance and converts it to an integer using 'parseInt'
           parseInt(localStorage.getItem("balance")) - getTotalCartValue(items);
+        // updates the balance stored in the local storage with the newly calculated 'updatedBalance'
         localStorage.setItem("balance", updatedBalance);
+        // After successfully placing the order and updating the balance, this line redirects the user to the "/thanks" page
         history.push("/thanks");
       } catch (e) {
+        // Checks if the error has a response object. If it does, it means that the error is coming from the server
         if (e.response) {
           enqueueSnackbar(e.response.data.message, { variant: "error" });
         } else {
@@ -693,12 +760,12 @@ const getAddresses = async (token) => {
 
 
 
-
+      //This line checks if the 'token' variable is falsy. If there is no token (meaning the user is not logged in), the code inside this block will execute
       if (!token) {
         enqueueSnackbar("You must be logged in to access checkout page", {
           history: "warning",
         });
-        history.push("/");
+        history.push("/");            // This line redirects the user to the home page
         return;
       }
       await getAddresses(token);
@@ -746,9 +813,19 @@ const getAddresses = async (token) => {
 
 
 
+
+
+
+
+
+              {/* If there are addresses available, it renders the code inside the 'first set' of parentheses, otherwise 'second set' */}
               {addresses.all.length ? (
+
+                // First set
+                // This maps through all addresses in the 'addresses.all' array and generates JSX for each address
                 addresses.all.map((ele) => {
                   return (
+                    // This creates a box with a dynamic class name based on whether the address is selected or not
                     <Box
                       className={
                         ele._id === addresses.selected
@@ -763,7 +840,10 @@ const getAddresses = async (token) => {
                         });
                       }}
                     >
+
+                      {/* This renders the address text. */}
                       <Typography>{ele.address}</Typography>
+                      {/* Renders a button with a delete icon and handles the delete action asynchronously when clicked */}
                       <Button
                         startIcon={<Delete />}
                         onClick={async () => {
@@ -779,10 +859,17 @@ const getAddresses = async (token) => {
 
 
 
-
+                // Second set
+                // This renders a message indicating that no addresses were found
                 <Typography my="1rem">
                  No addresses found for this account. Please add one to proceed
                 </Typography>
+
+
+
+
+
+
 
 
 
@@ -796,12 +883,15 @@ const getAddresses = async (token) => {
 
 
 
-
+            
+            {/* It checks if the 'isAddingNewAddress' property of the 'newAddress' object is false
+            If it's false, it renders the code inside the 'first set', otherwise 'second set' */}
             {!newAddress.isAddingNewAddress ? (
 
 
 
 
+              // first set
               <Button
                 color="primary"
                 variant="contained"
@@ -810,7 +900,7 @@ const getAddresses = async (token) => {
                 onClick={() => {
                   setNewAddress((currNewAddress) => ({
                     ...currNewAddress,
-                    isAddingNewAddress: true,
+                    isAddingNewAddress: true,             //  indicating that a new address is being added
                   }));
                 }}
                 >
@@ -826,7 +916,8 @@ const getAddresses = async (token) => {
 
 
 
-
+              // second set
+              // This component presumably handles the addition of a new address
               <AddNewAddressView
                 token={token}
                 newAddress={newAddress}
