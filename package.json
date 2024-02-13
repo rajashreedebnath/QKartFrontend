@@ -31,7 +31,6 @@
   "jest": {
     "resetMocks": false
   },
-  
   "scripts": {
     "start": "PORT=8081 react-scripts start",
     "build": "react-scripts build",
